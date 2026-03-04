@@ -10,7 +10,10 @@
   "plugins": [
     {
       "name": "aether-dev",
-      "source": ".",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/aether-auto/aether-dev.git"
+      },
       "description": "Complete software development workflow: ideation, setup, task generation, UI specs, scaffolding, building, and review",
       "version": "0.1.0"
     }
