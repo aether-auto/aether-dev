@@ -1,0 +1,18 @@
+{
+  "name": "aether-dev",
+  "owner": {
+    "name": "Arnav Marda"
+  },
+  "metadata": {
+    "description": "Complete software development workflow plugin for Claude Code",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "aether-dev",
+      "source": ".",
+      "description": "Complete software development workflow: ideation, setup, task generation, UI specs, scaffolding, building, and review",
+      "version": "0.1.0"
+    }
+  ]
+}

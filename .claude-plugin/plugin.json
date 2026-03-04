@@ -1,0 +1,8 @@
+{
+  "name": "aether-dev",
+  "description": "Complete software development workflow: ideation, setup, task generation, UI specs, scaffolding, building, and review",
+  "version": "0.1.0",
+  "author": { "name": "Arnav Marda" },
+  "license": "MIT",
+  "keywords": ["workflow", "ideation", "spec", "planning", "development"]
+}

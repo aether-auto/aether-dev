@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1440, initial-scale=1">
+
+  <title>Void — Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .activity-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 120px;
+      padding-top: var(--space-md);
+    }
+    .activity-chart .bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .activity-chart .bar {
+      width: 100%;
+      border-radius: 3px 3px 0 0;
+      min-height: 4px;
+    }
+    .activity-chart .bar-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-ghost);
+      margin-top: 6px;
+    }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+    .three-col { display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-md); }
+    .greeting { margin-bottom: var(--space-lg); }
+    .greeting h1 {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+    }
+    .greeting h1 span { color: var(--cyan); }
+    .greeting p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+    .project-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md) 0;
+      border-bottom: 1px solid var(--void-border-subtle);
+    }
+    .project-row:last-child { border-bottom: none; }
+    .project-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .project-info { flex: 1; }
+    .project-name { font-size: 13.5px; font-weight: 500; color: var(--text-primary); }
+    .project-tasks { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+    .project-progress { width: 120px; }
+
+    .upcoming-task {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--void-border-subtle);
+    }
+    .upcoming-task:last-child { border-bottom: none; }
+    .upcoming-time {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-ghost);
+      width: 50px;
+      flex-shrink: 0;
+    }
+    .upcoming-info { flex: 1; }
+    .upcoming-title { font-size: 13px; color: var(--text-primary); font-weight: 450; }
+    .upcoming-project { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">V</div>
+        <span class="logo-text">void_task</span>
+      </div>
+
+      <div class="sidebar-section-label">Main</div>
+      <a class="sidebar-item active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a class="sidebar-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        My Tasks
+        <span class="badge">12</span>
+      </a>
+      <a class="sidebar-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        Board
+      </a>
+      <a class="sidebar-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Calendar
+      </a>
+
+      <div class="sidebar-section-label">Projects</div>
+      <a class="sidebar-item">
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--cyan);opacity:0.6"></div>
+        Void Engine
+        <span class="badge">8</span>
+      </a>
+      <a class="sidebar-item">
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--amber);opacity:0.6"></div>
+        Marketing Site
+        <span class="badge">5</span>
+      </a>
+      <a class="sidebar-item">
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--status-info);opacity:0.6"></div>
+        Mobile App
+        <span class="badge">14</span>
+      </a>
+
+      <div class="sidebar-spacer"></div>
+
+      <div class="sidebar-section-label">Workspace</div>
+      <a class="sidebar-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings
+      </a>
+
+      <div class="sidebar-user">
+        <div class="avatar">AM</div>
+        <div class="user-info">
+          <span class="user-name">Alex Mercer</span>
+          <span class="user-plan">Pro Plan</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        Search tasks, projects…
+        <kbd>⌘K</kbd>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <div class="topbar-icon-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </div>
+        <button class="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Task
+        </button>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="main-content">
+      <div class="greeting">
+        <h1>Good morning, <span>Alex</span></h1>
+        <p>You have 7 tasks due today · 3 overdue</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card cyan">
+          <div class="stat-label">Total tasks</div>
+          <div class="stat-value">142</div>
+          <div class="stat-change up">↑ 12 this week</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="stat-label">In Progress</div>
+          <div class="stat-value">23</div>
+          <div class="stat-change up">↑ 3 since yesterday</div>
+        </div>
+        <div class="stat-card info">
+          <div class="stat-label">Completed</div>
+          <div class="stat-value">89</div>
+          <div class="stat-change up">↑ 8 this week</div>
+        </div>
+        <div class="stat-card danger">
+          <div class="stat-label">Overdue</div>
+          <div class="stat-value">3</div>
+          <div class="stat-change down">↑ 1 since yesterday</div>
+        </div>
+      </div>
+
+      <div class="three-col">
+        <!-- Left: Activity + Projects -->
+        <div class="flex-col gap-md" style="display:flex;flex-direction:column;gap:16px">
+          <!-- Activity Chart -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Weekly Activity</span>
+              <div class="flex gap-sm" style="display:flex;gap:8px">
+                <span class="tag cyan">Completed</span>
+                <span class="tag amber">Created</span>
+              </div>
+            </div>
+            <div class="activity-chart">
+              <div class="bar-group"><div class="bar" style="height:45%;background:var(--cyan);opacity:0.6"></div><div class="bar" style="height:60%;background:var(--amber);opacity:0.4"></div><span class="bar-label">Mon</span></div>
+              <div class="bar-group"><div class="bar" style="height:70%;background:var(--cyan);opacity:0.6"></div><div class="bar" style="height:50%;background:var(--amber);opacity:0.4"></div><span class="bar-label">Tue</span></div>
+              <div class="bar-group"><div class="bar" style="height:55%;background:var(--cyan);opacity:0.6"></div><div class="bar" style="height:80%;background:var(--amber);opacity:0.4"></div><span class="bar-label">Wed</span></div>
+              <div class="bar-group"><div class="bar" style="height:90%;background:var(--cyan);opacity:0.6"></div><div class="bar" style="height:40%;background:var(--amber);opacity:0.4"></div><span class="bar-label">Thu</span></div>
+              <div class="bar-group"><div class="bar" style="height:65%;background:var(--cyan);opacity:0.6"></div><div class="bar" style="height:70%;background:var(--amber);opacity:0.4"></div><span class="bar-label">Fri</span></div>
+              <div class="bar-group"><div class="bar" style="height:30%;background:var(--cyan);opacity:0.6"></div><div class="bar" style="height:20%;background:var(--amber);opacity:0.4"></div><span class="bar-label">Sat</span></div>
+              <div class="bar-group"><div class="bar" style="height:15%;background:var(--cyan);opacity:0.6"></div><div class="bar" style="height:10%;background:var(--amber);opacity:0.4"></div><span class="bar-label">Sun</span></div>
+            </div>
+          </div>
+
+          <!-- Projects -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Active Projects</span>
+              <button class="btn-secondary" style="padding:4px 10px;font-size:11px">View all</button>
+            </div>
+            <div class="project-row">
+              <div class="project-icon" style="background:var(--cyan-glow);color:var(--cyan)">VE</div>
+              <div class="project-info">
+                <div class="project-name">Void Engine</div>
+                <div class="project-tasks">24 tasks · 8 open</div>
+              </div>
+              <div class="project-progress">
+                <div class="progress-bar"><div class="progress-fill cyan" style="width:67%"></div></div>
+              </div>
+            </div>
+            <div class="project-row">
+              <div class="project-icon" style="background:var(--amber-glow);color:var(--amber)">MS</div>
+              <div class="project-info">
+                <div class="project-name">Marketing Site</div>
+                <div class="project-tasks">18 tasks · 5 open</div>
+              </div>
+              <div class="project-progress">
+                <div class="progress-bar"><div class="progress-fill amber" style="width:72%"></div></div>
+              </div>
+            </div>
+            <div class="project-row">
+              <div class="project-icon" style="background:var(--status-info-glow);color:var(--status-info)">MA</div>
+              <div class="project-info">
+                <div class="project-name">Mobile App</div>
+                <div class="project-tasks">45 tasks · 14 open</div>
+              </div>
+              <div class="project-progress">
+                <div class="progress-bar"><div class="progress-fill info" style="width:41%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Upcoming + Activity -->
+        <div class="flex-col gap-md" style="display:flex;flex-direction:column;gap:16px">
+          <!-- Due Today -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Due Today</span>
+              <span class="tag danger">7 tasks</span>
+            </div>
+            <div class="upcoming-task">
+              <span class="upcoming-time">09:00</span>
+              <div class="upcoming-info">
+                <div class="upcoming-title">Review PR #247 — auth refactor</div>
+                <div class="upcoming-project">Void Engine</div>
+              </div>
+              <span class="tag cyan" style="font-size:9px">In Progress</span>
+            </div>
+            <div class="upcoming-task">
+              <span class="upcoming-time">11:00</span>
+              <div class="upcoming-info">
+                <div class="upcoming-title">Update landing page copy</div>
+                <div class="upcoming-project">Marketing Site</div>
+              </div>
+              <span class="tag ghost" style="font-size:9px">Todo</span>
+            </div>
+            <div class="upcoming-task">
+              <span class="upcoming-time">14:00</span>
+              <div class="upcoming-info">
+                <div class="upcoming-title">Fix navigation drawer bug</div>
+                <div class="upcoming-project">Mobile App</div>
+              </div>
+              <span class="tag amber" style="font-size:9px">High</span>
+            </div>
+            <div class="upcoming-task">
+              <span class="upcoming-time">16:00</span>
+              <div class="upcoming-info">
+                <div class="upcoming-title">Sprint retro meeting notes</div>
+                <div class="upcoming-project">Void Engine</div>
+              </div>
+              <span class="tag ghost" style="font-size:9px">Todo</span>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Recent Activity</span>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot cyan">✓</div>
+              <div class="timeline-content">
+                <div class="timeline-text"><strong>You</strong> completed "Setup CI pipeline"</div>
+                <div class="timeline-time">2 min ago</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot amber">→</div>
+              <div class="timeline-content">
+                <div class="timeline-text"><strong>Sarah</strong> moved "API docs" to In Review</div>
+                <div class="timeline-time">15 min ago</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot info">+</div>
+              <div class="timeline-content">
+                <div class="timeline-text"><strong>Jake</strong> created 3 new tasks in Mobile App</div>
+                <div class="timeline-time">1 hr ago</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot cyan">✓</div>
+              <div class="timeline-content">
+                <div class="timeline-text"><strong>You</strong> completed "Database migration v2"</div>
+                <div class="timeline-time">2 hrs ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

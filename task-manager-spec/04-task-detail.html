@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1440, initial-scale=1">
+
+  <title>Void — Task Detail</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .detail-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-ghost);
+      margin-bottom: var(--space-lg);
+    }
+    .detail-breadcrumb a { color: var(--text-muted); text-decoration: none; }
+    .detail-breadcrumb a:hover { color: var(--cyan); }
+    .detail-title-section { margin-bottom: var(--space-xl); }
+    .detail-title {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: var(--space-sm);
+    }
+    .detail-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-ghost);
+    }
+    .detail-description {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-xl);
+      padding: var(--space-lg);
+      background: var(--void-deep);
+      border: 1px solid var(--void-border-subtle);
+      border-radius: var(--radius-md);
+    }
+    .detail-description p { margin-bottom: var(--space-md); }
+    .detail-description p:last-child { margin-bottom: 0; }
+    .detail-description code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--void-elevated);
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: var(--cyan);
+    }
+    .comment-box {
+      display: flex;
+      gap: var(--space-md);
+      padding: var(--space-lg);
+      background: var(--void-deep);
+      border: 1px solid var(--void-border-subtle);
+      border-radius: var(--radius-md);
+      margin-top: var(--space-lg);
+    }
+    .comment-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--cyan-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--cyan);
+      flex-shrink: 0;
+    }
+    .comment-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      outline: none;
+      resize: none;
+    }
+    .comment-input::placeholder { color: var(--text-ghost); }
+    .comment-thread { margin-top: var(--space-lg); }
+    .comment-item {
+      display: flex;
+      gap: var(--space-md);
+      padding: var(--space-md) 0;
+      border-bottom: 1px solid var(--void-border-subtle);
+    }
+    .comment-item:last-child { border-bottom: none; }
+    .comment-body { flex: 1; }
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: 4px;
+    }
+    .comment-author { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+    .comment-time { font-family: var(--font-mono); font-size: 10px; color: var(--text-ghost); }
+    .comment-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+    .sidebar-card {
+      background: var(--void-card);
+      border: 1px solid var(--void-border-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+    }
+    .sidebar-card-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-ghost);
+      margin-bottom: var(--space-md);
+    }
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-logo"><div class="logo-mark">V</div><span class="logo-text">void_task</span></div>
+      <div class="sidebar-section-label">Main</div>
+      <a class="sidebar-item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+      <a class="sidebar-item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>My Tasks<span class="badge">12</span></a>
+      <a class="sidebar-item active"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>Board</a>
+      <a class="sidebar-item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar</a>
+      <div class="sidebar-section-label">Projects</div>
+      <a class="sidebar-item"><div style="width:18px;height:18px;border-radius:4px;background:var(--cyan);opacity:0.6"></div>Void Engine<span class="badge">8</span></a>
+      <a class="sidebar-item"><div style="width:18px;height:18px;border-radius:4px;background:var(--amber);opacity:0.6"></div>Marketing Site<span class="badge">5</span></a>
+      <a class="sidebar-item"><div style="width:18px;height:18px;border-radius:4px;background:var(--status-info);opacity:0.6"></div>Mobile App<span class="badge">14</span></a>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-section-label">Workspace</div>
+      <a class="sidebar-item"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</a>
+      <div class="sidebar-user"><div class="avatar">AM</div><div class="user-info"><span class="user-name">Alex Mercer</span><span class="user-plan">Pro Plan</span></div></div>
+    </nav>
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        Search tasks, projects…
+        <kbd>⌘K</kbd>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <div class="topbar-icon-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </div>
+        <button class="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Task
+        </button>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="main-content">
+      <div class="detail-breadcrumb">
+        <a href="#">Void Engine</a>
+        <span>/</span>
+        <a href="#">Sprint 14</a>
+        <span>/</span>
+        <span style="color:var(--text-secondary)">VE-247</span>
+      </div>
+
+      <div class="detail-layout">
+        <!-- Left: Main content -->
+        <div>
+          <div class="detail-title-section">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+              <span class="tag cyan">In Progress</span>
+              <span class="tag danger" style="font-size:9px">P0 · Critical</span>
+            </div>
+            <h1 class="detail-title">Migrate auth service to JWT v2</h1>
+            <span class="detail-id">VE-247 · Created Mar 3, 2026</span>
+          </div>
+
+          <div class="detail-description">
+            <p>Swap our current HMAC-SHA256 token signing for <code>EdDSA</code> signatures using the Ed25519 curve. This reduces token size by ~40% and improves verification performance.</p>
+            <p>Key changes needed:</p>
+            <p>1. Update <code>auth-middleware.ts</code> to use the new <code>jose</code> library for EdDSA verification<br>
+            2. Migrate the key rotation service to generate Ed25519 key pairs<br>
+            3. Add backward-compatible token validation (accept both old and new formats during migration window)<br>
+            4. Update all downstream services that validate tokens directly</p>
+            <p>Migration window: 2 weeks. After that, revoke all HMAC-signed tokens.</p>
+          </div>
+
+          <!-- Subtasks -->
+          <div class="card" style="margin-bottom:var(--space-lg)">
+            <div class="card-header">
+              <span class="card-title">Subtasks</span>
+              <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">3/5 complete</span>
+            </div>
+            <div style="margin-bottom:12px">
+              <div class="progress-bar"><div class="progress-fill cyan" style="width:60%"></div></div>
+            </div>
+            <div class="subtask-item">
+              <div class="task-checkbox checked" style="width:16px;height:16px;font-size:9px"></div>
+              <span class="subtask-title done">Install jose library and configure EdDSA</span>
+            </div>
+            <div class="subtask-item">
+              <div class="task-checkbox checked" style="width:16px;height:16px;font-size:9px"></div>
+              <span class="subtask-title done">Update key rotation service</span>
+            </div>
+            <div class="subtask-item">
+              <div class="task-checkbox checked" style="width:16px;height:16px;font-size:9px"></div>
+              <span class="subtask-title done">Add dual-format token validation</span>
+            </div>
+            <div class="subtask-item">
+              <div class="task-checkbox" style="width:16px;height:16px"></div>
+              <span class="subtask-title">Update downstream service SDKs</span>
+              <span class="tag amber" style="font-size:8px;padding:1px 5px;margin-left:auto">In Progress</span>
+            </div>
+            <div class="subtask-item">
+              <div class="task-checkbox" style="width:16px;height:16px"></div>
+              <span class="subtask-title">Write migration runbook and rollback plan</span>
+            </div>
+          </div>
+
+          <!-- Comments -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Comments</span>
+              <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">3 comments</span>
+            </div>
+
+            <div class="comment-box">
+              <div class="comment-avatar">AM</div>
+              <textarea class="comment-input" placeholder="Write a comment… (Markdown supported)" rows="1"></textarea>
+              <button class="btn-primary" style="padding:6px 14px;font-size:11px;align-self:flex-end">Send</button>
+            </div>
+
+            <div class="comment-thread">
+              <div class="comment-item">
+                <div class="comment-avatar" style="background:var(--status-info-glow);color:var(--status-info)">JK</div>
+                <div class="comment-body">
+                  <div class="comment-header">
+                    <span class="comment-author">Jake Kim</span>
+                    <span class="comment-time">2 hours ago</span>
+                  </div>
+                  <div class="comment-text">Tested the dual validation on staging — both old HMAC and new EdDSA tokens pass through cleanly. No regressions in the auth flow. Ready to start on downstream SDKs.</div>
+                </div>
+              </div>
+              <div class="comment-item">
+                <div class="comment-avatar">AM</div>
+                <div class="comment-body">
+                  <div class="comment-header">
+                    <span class="comment-author">Alex Mercer</span>
+                    <span class="comment-time">5 hours ago</span>
+                  </div>
+                  <div class="comment-text">Nice. Let's make sure the Python SDK gets updated first since billing service depends on it. I'll handle the Go SDK.</div>
+                </div>
+              </div>
+              <div class="comment-item">
+                <div class="comment-avatar" style="background:var(--amber-glow);color:var(--amber)">SL</div>
+                <div class="comment-body">
+                  <div class="comment-header">
+                    <span class="comment-author">Sarah Liu</span>
+                    <span class="comment-time">Yesterday</span>
+                  </div>
+                  <div class="comment-text">Opened the PR for the key rotation changes — #312. The new key pair generation is about 3x faster than RSA was. Should review before merging the middleware update.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Sidebar details -->
+        <div class="detail-sidebar">
+          <div class="sidebar-card">
+            <div class="sidebar-card-title">Details</div>
+            <div class="detail-field">
+              <div class="detail-field-label">Status</div>
+              <div class="detail-field-value"><span class="tag cyan" style="font-size:10px">In Progress</span></div>
+            </div>
+            <div class="detail-field">
+              <div class="detail-field-label">Priority</div>
+              <div class="detail-field-value"><span class="priority-dot critical"></span> Critical</div>
+            </div>
+            <div class="detail-field">
+              <div class="detail-field-label">Assignees</div>
+              <div class="detail-field-value" style="gap:6px">
+                <div style="width:22px;height:22px;border-radius:50%;background:var(--cyan-glow);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:9px;font-weight:700;color:var(--cyan)">AM</div>
+                <div style="width:22px;height:22px;border-radius:50%;background:var(--status-info-glow);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:9px;font-weight:700;color:var(--status-info)">JK</div>
+                <span style="font-size:12px;color:var(--text-muted)">Alex, Jake</span>
+              </div>
+            </div>
+            <div class="detail-field">
+              <div class="detail-field-label">Due Date</div>
+              <div class="detail-field-value" style="color:var(--amber)">Mar 10, 2026</div>
+            </div>
+            <div class="detail-field">
+              <div class="detail-field-label">Project</div>
+              <div class="detail-field-value">
+                <div style="width:14px;height:14px;border-radius:3px;background:var(--cyan);opacity:0.6"></div>
+                Void Engine
+              </div>
+            </div>
+            <div class="detail-field">
+              <div class="detail-field-label">Sprint</div>
+              <div class="detail-field-value">Sprint 14</div>
+            </div>
+            <div class="detail-field" style="border-bottom:none">
+              <div class="detail-field-label">Labels</div>
+              <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">
+                <span class="tag cyan" style="font-size:9px">Core</span>
+                <span class="tag danger" style="font-size:9px">Security</span>
+                <span class="tag info" style="font-size:9px">Backend</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity -->
+          <div class="sidebar-card">
+            <div class="sidebar-card-title">Activity</div>
+            <div class="timeline-item" style="padding:8px 0">
+              <div class="timeline-dot cyan" style="width:20px;height:20px;font-size:9px">→</div>
+              <div class="timeline-content">
+                <div class="timeline-text" style="font-size:12px"><strong>Alex</strong> moved to In Progress</div>
+                <div class="timeline-time">2 days ago</div>
+              </div>
+            </div>
+            <div class="timeline-item" style="padding:8px 0">
+              <div class="timeline-dot info" style="width:20px;height:20px;font-size:9px">+</div>
+              <div class="timeline-content">
+                <div class="timeline-text" style="font-size:12px"><strong>Jake</strong> was assigned</div>
+                <div class="timeline-time">3 days ago</div>
+              </div>
+            </div>
+            <div class="timeline-item" style="padding:8px 0">
+              <div class="timeline-dot amber" style="width:20px;height:20px;font-size:9px">!</div>
+              <div class="timeline-content">
+                <div class="timeline-text" style="font-size:12px">Priority set to <strong>Critical</strong></div>
+                <div class="timeline-time">5 days ago</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Linked -->
+          <div class="sidebar-card">
+            <div class="sidebar-card-title">Linked Items</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+                <span style="font-family:var(--font-mono);color:var(--text-ghost);font-size:10px">PR</span>
+                <a href="#" style="color:var(--cyan);text-decoration:none">#312</a>
+                <span style="color:var(--text-muted)">Key rotation changes</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+                <span style="font-family:var(--font-mono);color:var(--text-ghost);font-size:10px">Blocks</span>
+                <a href="#" style="color:var(--cyan);text-decoration:none">VE-251</a>
+                <span style="color:var(--text-muted)">Deploy auth v2 to prod</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1440, initial-scale=1">
+
+  <title>Void — Board</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .board-filters {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+    }
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: var(--void-card);
+      border: 1px solid var(--void-border);
+      border-radius: var(--radius-sm);
+      padding: 5px 12px;
+      cursor: pointer;
+    }
+    .filter-chip.active {
+      border-color: var(--cyan-dim);
+      color: var(--cyan);
+      background: var(--cyan-ghost);
+    }
+    .kanban-add-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: var(--space-sm);
+      border: 1px dashed var(--void-border);
+      border-radius: var(--radius-sm);
+      color: var(--text-ghost);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .kanban-card-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: var(--space-sm);
+    }
+    .kanban-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: var(--space-sm);
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--void-border-subtle);
+    }
+    .kanban-card-due {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-ghost);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .kanban-card-due.overdue { color: var(--status-danger); }
+    .avatar-stack {
+      display: flex;
+    }
+    .avatar-stack .mini-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      font-weight: 700;
+      margin-left: -4px;
+      border: 2px solid var(--void-card);
+    }
+    .avatar-stack .mini-avatar:first-child { margin-left: 0; }
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+  <div class="app-shell">
+    <!-- Sidebar (same as dashboard) -->
+    <nav class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">V</div>
+        <span class="logo-text">void_task</span>
+      </div>
+      <div class="sidebar-section-label">Main</div>
+      <a class="sidebar-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a class="sidebar-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        My Tasks
+        <span class="badge">12</span>
+      </a>
+      <a class="sidebar-item active">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        Board
+      </a>
+      <a class="sidebar-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Calendar
+      </a>
+      <div class="sidebar-section-label">Projects</div>
+      <a class="sidebar-item">
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--cyan);opacity:0.6"></div>
+        Void Engine <span class="badge">8</span>
+      </a>
+      <a class="sidebar-item">
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--amber);opacity:0.6"></div>
+        Marketing Site <span class="badge">5</span>
+      </a>
+      <a class="sidebar-item">
+        <div style="width:18px;height:18px;border-radius:4px;background:var(--status-info);opacity:0.6"></div>
+        Mobile App <span class="badge">14</span>
+      </a>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-section-label">Workspace</div>
+      <a class="sidebar-item">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings
+      </a>
+      <div class="sidebar-user">
+        <div class="avatar">AM</div>
+        <div class="user-info">
+          <span class="user-name">Alex Mercer</span>
+          <span class="user-plan">Pro Plan</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        Search tasks, projects…
+        <kbd>⌘K</kbd>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <div class="topbar-icon-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </div>
+        <button class="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Task
+        </button>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="main-content">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Board</div>
+          <div class="page-subtitle">Void Engine · Sprint 14</div>
+        </div>
+        <div class="flex gap-sm" style="display:flex;gap:8px">
+          <button class="btn-secondary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            Filter
+          </button>
+          <button class="btn-secondary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+            Group by
+          </button>
+        </div>
+      </div>
+
+      <div class="board-filters">
+        <span class="filter-chip active">All tasks</span>
+        <span class="filter-chip">Assigned to me</span>
+        <span class="filter-chip">
+          <span class="priority-dot high" style="width:6px;height:6px"></span>
+          High priority
+        </span>
+        <span class="filter-chip">Due this week</span>
+      </div>
+
+      <!-- Kanban Board -->
+      <div class="kanban-board">
+        <!-- Backlog -->
+        <div class="kanban-column">
+          <div class="kanban-col-header">
+            <div class="kanban-col-title" style="color:var(--text-muted)">
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--text-ghost);display:inline-block"></span>
+              Backlog
+            </div>
+            <span class="kanban-col-count">6</span>
+          </div>
+
+          <div class="kanban-card">
+            <div class="kanban-card-tags"><span class="tag ghost" style="font-size:9px;padding:2px 6px">Research</span></div>
+            <div class="kanban-card-title" style="margin-top:8px">Evaluate caching strategies for API layer</div>
+            <div class="kanban-card-desc">Compare Redis vs Memcached for session management</div>
+            <div class="kanban-card-footer">
+              <span class="kanban-card-due">Mar 15</span>
+              <div class="kanban-card-avatar" style="background:var(--status-info-glow);color:var(--status-info)">JK</div>
+            </div>
+          </div>
+
+          <div class="kanban-card">
+            <div class="kanban-card-tags"><span class="tag info" style="font-size:9px;padding:2px 6px">Feature</span></div>
+            <div class="kanban-card-title" style="margin-top:8px">Dark mode toggle persistence</div>
+            <div class="kanban-card-footer">
+              <span class="kanban-card-due">Mar 18</span>
+              <div class="kanban-card-avatar" style="background:var(--amber-glow);color:var(--amber)">SL</div>
+            </div>
+          </div>
+
+          <div class="kanban-card">
+            <div class="kanban-card-tags"><span class="tag ghost" style="font-size:9px;padding:2px 6px">Chore</span></div>
+            <div class="kanban-card-title" style="margin-top:8px">Update dependency versions</div>
+            <div class="kanban-card-footer">
+              <span class="kanban-card-due">Mar 20</span>
+              <div class="kanban-card-avatar" style="background:var(--cyan-glow);color:var(--cyan)">AM</div>
+            </div>
+          </div>
+
+          <div class="kanban-add-btn">+ Add task</div>
+        </div>
+
+        <!-- Todo -->
+        <div class="kanban-column">
+          <div class="kanban-col-header">
+            <div class="kanban-col-title" style="color:var(--status-info)">
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--status-info);display:inline-block"></span>
+              Todo
+            </div>
+            <span class="kanban-col-count">4</span>
+          </div>
+
+          <div class="kanban-card">
+            <div class="kanban-card-tags">
+              <span class="tag danger" style="font-size:9px;padding:2px 6px">Bug</span>
+              <span class="tag amber" style="font-size:9px;padding:2px 6px">P1</span>
+            </div>
+            <div class="kanban-card-title" style="margin-top:8px">Fix auth token refresh race condition</div>
+            <div class="kanban-card-desc">Tokens expire mid-request causing 401 cascades</div>
+            <div class="kanban-card-footer">
+              <span class="kanban-card-due overdue">⚠ Overdue</span>
+              <div class="avatar-stack">
+                <div class="mini-avatar" style="background:var(--cyan-glow);color:var(--cyan)">AM</div>
+                <div class="mini-avatar" style="background:var(--amber-glow);color:var(--amber)">SL</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="kanban-card">
+            <div class="kanban-card-tags"><span class="tag info" style="font-size:9px;padding:2px 6px">Feature</span></div>
+            <div class="kanban-card-title" style="margin-top:8px">Implement keyboard shortcuts modal</div>
+            <div class="kanban-card-footer">
+              <span class="kanban-card-due">Mar 12</span>
+              <div class="kanban-card-avatar" style="background:var(--cyan-glow);color:var(--cyan)">AM</div>
+            </div>
+          </div>
+
+          <div class="kanban-card">
+            <div class="kanban-card-tags"><span class="tag ghost" style="font-size:9px;padding:2px 6px">Design</span></div>
+            <div class="kanban-card-title" style="margin-top:8px">Redesign notification center panel</div>
+            <div class="kanban-card-footer">
+              <span class="kanban-card-due">Mar 14</span>
+              <div class="kanban-card-avatar" style="background:var(--status-success-glow);color:var(--status-success)">RK</div>
+            </div>
+          </div>
+
+          <div class="kanban-add-btn">+ Add task</div>
+        </div>
+
+        <!-- In Progress -->
+        <div class="kanban-column">
+          <div class="kanban-col-header">
+            <div class="kanban-col-title" style="color:var(--cyan)">
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--cyan);display:inline-block"></span>
+              In Progress
+            </div>
+            <span class="kanban-col-count">3</span>
+          </div>
+
+          <div class="kanban-card" style="border-left:2px solid var(--cyan)">
+            <div class="kanban-card-tags">
+              <span class="tag cyan" style="font-size:9px;padding:2px 6px">Core</span>
+              <span class="tag danger" style="font-size:9px;padding:2px 6px">P0</span>
+            </div>
+            <div class="kanban-card-title" style="margin-top:8px">Migrate auth service to JWT v2</div>
+            <div class="kanban-card-desc">Swap HMAC-SHA256 for EdDSA signatures. Update all middleware.</div>
+            <div style="margin-top:8px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted)">Progress</span>
+                <span style="font-family:var(--font-mono);font-size:10px;color:var(--cyan)">65%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill cyan" style="width:65%"></div></div>
+            </div>
+            <div class="kanban-card-footer">
+              <span class="kanban-card-due">Mar 10</span>
+              <div class="avatar-stack">
+                <div class="mini-avatar" style="background:var(--cyan-glow);color:var(--cyan)">AM</div>
+                <div class="mini-avatar" style="background:var(--status-info-glow);color:var(--status-info)">JK</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="kanban-card" style="border-left:2px solid var(--amber)">
+            <div class="kanban-card-tags"><span class="tag amber" style="font-size:9px;padding:2px 6px">Infra</span></div>
+            <div class="kanban-card-title" style="margin-top:8px">Setup monitoring dashboards</div>
+            <div style="margin-top:8px">
+              <div class="progress-bar"><div class="progress-fill amber" style="width:40%"></div></div>
+            </div>
+            <div class="kanban-card-footer">
+              <span class="kanban-card-due">Mar 11</span>
+              <div class="kanban-card-avatar" style="background:var(--amber-glow);color:var(--amber)">SL</div>
+            </div>
+          </div>
+
+          <div class="kanban-card" style="border-left:2px solid var(--status-info)">
+            <div class="kanban-card-tags"><span class="tag info" style="font-size:9px;padding:2px 6px">Docs</span></div>
+            <div class="kanban-card-title" style="margin-top:8px">Write API reference for v2 endpoints</div>
+            <div style="margin-top:8px">
+              <div class="progress-bar"><div class="progress-fill info" style="width:80%"></div></div>
+            </div>
+            <div class="kanban-card-footer">
+              <span class="kanban-card-due">Mar 9</span>
+              <div class="kanban-card-avatar" style="background:var(--status-success-glow);color:var(--status-success)">RK</div>
+            </div>
+          </div>
+
+          <div class="kanban-add-btn">+ Add task</div>
+        </div>
+
+        <!-- Done -->
+        <div class="kanban-column">
+          <div class="kanban-col-header">
+            <div class="kanban-col-title" style="color:var(--status-success)">
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--status-success);display:inline-block"></span>
+              Done
+            </div>
+            <span class="kanban-col-count">5</span>
+          </div>
+
+          <div class="kanban-card" style="opacity:0.65">
+            <div class="kanban-card-title" style="text-decoration:line-through;color:var(--text-muted)">Setup CI/CD pipeline for staging</div>
+            <div class="kanban-card-footer">
+              <span class="kanban-card-due" style="color:var(--status-success)">✓ Completed</span>
+              <div class="kanban-card-avatar" style="background:var(--cyan-glow);color:var(--cyan)">AM</div>
+            </div>
+          </div>
+
+          <div class="kanban-card" style="opacity:0.65">
+            <div class="kanban-card-title" style="text-decoration:line-through;color:var(--text-muted)">Database migration scripts v2</div>
+            <div class="kanban-card-footer">
+              <span class="kanban-card-due" style="color:var(--status-success)">✓ Completed</span>
+              <div class="kanban-card-avatar" style="background:var(--status-info-glow);color:var(--status-info)">JK</div>
+            </div>
+          </div>
+
+          <div class="kanban-card" style="opacity:0.65">
+            <div class="kanban-card-title" style="text-decoration:line-through;color:var(--text-muted)">Seed test data generator</div>
+            <div class="kanban-card-footer">
+              <span class="kanban-card-due" style="color:var(--status-success)">✓ Completed</span>
+              <div class="kanban-card-avatar" style="background:var(--amber-glow);color:var(--amber)">SL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

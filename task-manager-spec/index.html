@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1440, initial-scale=1">
+  <title>Void Task Manager — UI Spec</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void-black: #08090d;
+      --void-deep: #0c0e14;
+      --void-surface: #12141c;
+      --void-card: #181b25;
+      --void-elevated: #1e2130;
+      --void-border: #252838;
+      --void-border-subtle: #1c1f2e;
+      --text-primary: #e8eaf0;
+      --text-secondary: #8b8fa4;
+      --text-muted: #5a5e73;
+      --text-ghost: #3a3e50;
+      --cyan: #00e5cc;
+      --cyan-dim: #00b8a3;
+      --cyan-glow: rgba(0, 229, 204, 0.15);
+      --cyan-ghost: rgba(0, 229, 204, 0.06);
+      --amber: #ffb547;
+      --amber-glow: rgba(255, 181, 71, 0.15);
+      --info: #6c8cff;
+      --info-glow: rgba(108, 140, 255, 0.15);
+      --danger: #ff5c72;
+      --danger-glow: rgba(255, 92, 114, 0.15);
+      --success: #4ceb9a;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--void-black);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Dot grid bg ── */
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(circle at 1px 1px, var(--void-border-subtle) 1px, transparent 0);
+      background-size: 28px 28px;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* ── Header ── */
+    .spec-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 9, 13, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--void-border-subtle);
+      padding: 16px 48px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .spec-logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--cyan), var(--cyan-dim));
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--void-black);
+      box-shadow: 0 0 20px rgba(0,229,204,0.12);
+    }
+    .spec-header h1 {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .spec-header .sep {
+      width: 1px;
+      height: 20px;
+      background: var(--void-border);
+    }
+    .spec-header .label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--cyan);
+      background: var(--cyan-glow);
+      padding: 3px 10px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .spec-nav {
+      margin-left: auto;
+      display: flex;
+      gap: 4px;
+    }
+    .spec-nav a {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .spec-nav a:hover { color: var(--text-primary); background: var(--void-elevated); }
+    .spec-nav a.active { color: var(--cyan); background: var(--cyan-ghost); }
+
+    /* ── Main content ── */
+    .spec-content {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 48px;
+    }
+
+    /* ── Section ── */
+    .spec-section {
+      margin-bottom: 80px;
+    }
+    .spec-section-title {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-ghost);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .spec-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--void-border-subtle);
+    }
+
+    /* ── Flow Diagram ── */
+    .flow-container {
+      background: var(--void-deep);
+      border: 1px solid var(--void-border-subtle);
+      border-radius: 14px;
+      padding: 48px 32px;
+      overflow-x: auto;
+    }
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      min-width: 900px;
+    }
+    .flow-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .flow-node:hover { transform: translateY(-4px); }
+    .flow-node-box {
+      width: 140px;
+      height: 90px;
+      background: var(--void-card);
+      border: 2px solid var(--void-border);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .flow-node:hover .flow-node-box,
+    .flow-node.active .flow-node-box {
+      border-color: var(--cyan);
+      box-shadow: 0 0 24px rgba(0,229,204,0.12), 0 0 60px rgba(0,229,204,0.04);
+    }
+    .flow-node.active .flow-node-box { background: var(--cyan-ghost); }
+    .flow-node-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+    .flow-node-label {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+    .flow-node.active .flow-node-label { color: var(--cyan); }
+    .flow-node-num {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 20px;
+      height: 20px;
+      background: var(--void-elevated);
+      border: 1px solid var(--void-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .flow-node.active .flow-node-num {
+      background: var(--cyan);
+      border-color: var(--cyan);
+      color: var(--void-black);
+    }
+
+    .flow-arrow {
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      flex-shrink: 0;
+    }
+    .flow-arrow-line {
+      width: 40px;
+      height: 1px;
+      background: var(--void-border);
+      position: relative;
+    }
+    .flow-arrow-line::after {
+      content: '';
+      position: absolute;
+      right: -1px;
+      top: -3px;
+      width: 0;
+      height: 0;
+      border-left: 5px solid var(--void-border);
+      border-top: 3.5px solid transparent;
+      border-bottom: 3.5px solid transparent;
+    }
+    .flow-arrow-label {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+    .flow-arrow-line-container {
+      position: relative;
+    }
+
+    /* Branch arrows below main flow */
+    .flow-branches {
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      margin-top: 24px;
+      min-width: 900px;
+    }
+    .flow-branch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .flow-branch-line {
+      width: 1px;
+      height: 20px;
+      background: var(--void-border);
+    }
+    .flow-branch-label {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      color: var(--text-ghost);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Page Cards Grid ── */
+    .pages-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .page-card {
+      background: var(--void-card);
+      border: 1px solid var(--void-border-subtle);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .page-card:hover {
+      border-color: var(--void-border);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+      transform: translateY(-2px);
+    }
+    .page-card.active {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 1px var(--cyan), 0 8px 40px rgba(0,229,204,0.08);
+    }
+    .page-card-preview {
+      height: 320px;
+      overflow: hidden;
+      position: relative;
+      background: var(--void-black);
+      border-bottom: 1px solid var(--void-border-subtle);
+    }
+    .page-card-preview iframe {
+      width: 1440px;
+      height: 900px;
+      border: none;
+      transform: scale(0.5);
+      transform-origin: top left;
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      margin-left: -720px;
+    }
+    .page-card-preview::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 70%, var(--void-card));
+      pointer-events: none;
+    }
+    .page-card-info {
+      padding: 20px 24px;
+    }
+    .page-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .page-card-num {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--void-black);
+      background: var(--cyan);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .page-card-title {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .page-card-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .page-card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .spec-tag {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .spec-tag.cyan { background: var(--cyan-glow); color: var(--cyan); }
+    .spec-tag.amber { background: var(--amber-glow); color: var(--amber); }
+    .spec-tag.info { background: var(--info-glow); color: var(--info); }
+    .spec-tag.danger { background: var(--danger-glow); color: var(--danger); }
+    .spec-tag.ghost { background: var(--void-elevated); color: var(--text-muted); }
+
+    /* ── Full Preview Modal ── */
+    .preview-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(8, 9, 13, 0.9);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px;
+      overflow-y: auto;
+    }
+    .preview-overlay.open { display: flex; }
+    .preview-frame-container {
+      width: 100%;
+      max-width: 1440px;
+      background: var(--void-card);
+      border: 1px solid var(--void-border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+    }
+    .preview-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      background: var(--void-deep);
+      border-bottom: 1px solid var(--void-border-subtle);
+    }
+    .preview-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .preview-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .preview-dot.red { background: #ff5c72; }
+    .preview-dot.yellow { background: #ffb547; }
+    .preview-dot.green { background: #4ceb9a; }
+    .preview-url {
+      flex: 1;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--void-surface);
+      border: 1px solid var(--void-border-subtle);
+      border-radius: 6px;
+      padding: 5px 16px;
+    }
+    .preview-close {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--void-elevated);
+      border: 1px solid var(--void-border);
+      border-radius: 6px;
+      padding: 5px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .preview-close:hover { color: var(--text-primary); border-color: var(--text-muted); }
+    .preview-iframe-wrap {
+      height: 800px;
+      overflow: hidden;
+    }
+    .preview-iframe-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .preview-nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background: var(--void-deep);
+      border-top: 1px solid var(--void-border-subtle);
+    }
+    .preview-nav-btn {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--void-card);
+      border: 1px solid var(--void-border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .preview-nav-btn:hover { color: var(--text-primary); }
+    .preview-nav-btn.active { color: var(--cyan); border-color: var(--cyan); background: var(--cyan-ghost); }
+
+    /* ── Design Tokens Section ── */
+    .tokens-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .token-card {
+      background: var(--void-card);
+      border: 1px solid var(--void-border-subtle);
+      border-radius: 10px;
+      padding: 24px;
+    }
+    .token-card-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-ghost);
+      margin-bottom: 16px;
+    }
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+    }
+    .color-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .color-name {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .color-hex {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-ghost);
+      margin-left: auto;
+    }
+    .font-sample {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--void-border-subtle);
+    }
+    .font-sample:last-child { border-bottom: none; }
+    .font-sample-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    /* ── Keyboard hint ── */
+    .kbd-hint {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 50;
+      background: var(--void-card);
+      border: 1px solid var(--void-border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .kbd-hint kbd {
+      background: var(--void-elevated);
+      border: 1px solid var(--void-border);
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+
+  <!-- Header -->
+  <header class="spec-header">
+    <div class="spec-logo">V</div>
+    <h1>void_task</h1>
+    <div class="sep"></div>
+    <span class="label">UI Spec</span>
+    <nav class="spec-nav">
+      <a href="#flow" class="active">Flow</a>
+      <a href="#pages">Pages</a>
+      <a href="#tokens">Tokens</a>
+    </nav>
+  </header>
+
+  <!-- Content -->
+  <div class="spec-content">
+
+    <!-- ═══ Section: App Flow ═══ -->
+    <section id="flow" class="spec-section">
+      <div class="spec-section-title">01 — Application Flow</div>
+      <div class="flow-container">
+        <div class="flow-diagram">
+          <div class="flow-node active" data-page="0" onclick="openPreview(0)">
+            <div class="flow-node-box">
+              <span class="flow-node-num">1</span>
+              <span class="flow-node-icon">🔐</span>
+              <span class="flow-node-label">Login</span>
+            </div>
+          </div>
+
+          <div class="flow-arrow">
+            <div class="flow-arrow-line-container">
+              <span class="flow-arrow-label">Auth</span>
+              <div class="flow-arrow-line"></div>
+            </div>
+          </div>
+
+          <div class="flow-node" data-page="1" onclick="openPreview(1)">
+            <div class="flow-node-box">
+              <span class="flow-node-num">2</span>
+              <span class="flow-node-icon">📊</span>
+              <span class="flow-node-label">Dashboard</span>
+            </div>
+          </div>
+
+          <div class="flow-arrow">
+            <div class="flow-arrow-line-container">
+              <span class="flow-arrow-label">Navigate</span>
+              <div class="flow-arrow-line"></div>
+            </div>
+          </div>
+
+          <div class="flow-node" data-page="2" onclick="openPreview(2)">
+            <div class="flow-node-box">
+              <span class="flow-node-num">3</span>
+              <span class="flow-node-icon">📋</span>
+              <span class="flow-node-label">Board</span>
+            </div>
+          </div>
+
+          <div class="flow-arrow">
+            <div class="flow-arrow-line-container">
+              <span class="flow-arrow-label">Click task</span>
+              <div class="flow-arrow-line"></div>
+            </div>
+          </div>
+
+          <div class="flow-node" data-page="3" onclick="openPreview(3)">
+            <div class="flow-node-box">
+              <span class="flow-node-num">4</span>
+              <span class="flow-node-icon">📝</span>
+              <span class="flow-node-label">Task Detail</span>
+            </div>
+          </div>
+
+          <div class="flow-arrow">
+            <div class="flow-arrow-line-container">
+              <span class="flow-arrow-label">Sidebar</span>
+              <div class="flow-arrow-line"></div>
+            </div>
+          </div>
+
+          <div class="flow-node" data-page="4" onclick="openPreview(4)">
+            <div class="flow-node-box">
+              <span class="flow-node-num">5</span>
+              <span class="flow-node-icon">📅</span>
+              <span class="flow-node-label">Calendar</span>
+            </div>
+          </div>
+
+          <div class="flow-arrow">
+            <div class="flow-arrow-line-container">
+              <span class="flow-arrow-label">Sidebar</span>
+              <div class="flow-arrow-line"></div>
+            </div>
+          </div>
+
+          <div class="flow-node" data-page="5" onclick="openPreview(5)">
+            <div class="flow-node-box">
+              <span class="flow-node-num">6</span>
+              <span class="flow-node-icon">⚙️</span>
+              <span class="flow-node-label">Settings</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Section: Pages ═══ -->
+    <section id="pages" class="spec-section">
+      <div class="spec-section-title">02 — Page Specs</div>
+      <div class="pages-grid">
+
+        <div class="page-card" onclick="openPreview(0)">
+          <div class="page-card-preview">
+            <iframe src="01-login.html" loading="lazy"></iframe>
+          </div>
+          <div class="page-card-info">
+            <div class="page-card-header">
+              <span class="page-card-num">1</span>
+              <span class="page-card-title">Login</span>
+            </div>
+            <p class="page-card-desc">Split layout with branded art panel and sign-in form. Supports OAuth (Google, GitHub) and email/password auth.</p>
+            <div class="page-card-tags">
+              <span class="spec-tag cyan">Auth</span>
+              <span class="spec-tag ghost">OAuth</span>
+              <span class="spec-tag ghost">Email</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-card" onclick="openPreview(1)">
+          <div class="page-card-preview">
+            <iframe src="02-dashboard.html" loading="lazy"></iframe>
+          </div>
+          <div class="page-card-info">
+            <div class="page-card-header">
+              <span class="page-card-num">2</span>
+              <span class="page-card-title">Dashboard</span>
+            </div>
+            <p class="page-card-desc">Overview with stat cards, weekly activity chart, project progress bars, due-today list, and real-time activity timeline.</p>
+            <div class="page-card-tags">
+              <span class="spec-tag cyan">Stats</span>
+              <span class="spec-tag amber">Charts</span>
+              <span class="spec-tag info">Timeline</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-card" onclick="openPreview(2)">
+          <div class="page-card-preview">
+            <iframe src="03-board.html" loading="lazy"></iframe>
+          </div>
+          <div class="page-card-info">
+            <div class="page-card-header">
+              <span class="page-card-num">3</span>
+              <span class="page-card-title">Board (Kanban)</span>
+            </div>
+            <p class="page-card-desc">4-column Kanban board (Backlog, Todo, In Progress, Done) with drag targets, priority tags, progress bars, and avatar stacks.</p>
+            <div class="page-card-tags">
+              <span class="spec-tag cyan">Kanban</span>
+              <span class="spec-tag danger">Priority</span>
+              <span class="spec-tag ghost">Drag & Drop</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-card" onclick="openPreview(3)">
+          <div class="page-card-preview">
+            <iframe src="04-task-detail.html" loading="lazy"></iframe>
+          </div>
+          <div class="page-card-info">
+            <div class="page-card-header">
+              <span class="page-card-num">4</span>
+              <span class="page-card-title">Task Detail</span>
+            </div>
+            <p class="page-card-desc">Full task view: rich description, subtask checklist with progress, comment thread, metadata sidebar, activity log, linked PRs.</p>
+            <div class="page-card-tags">
+              <span class="spec-tag cyan">Subtasks</span>
+              <span class="spec-tag amber">Comments</span>
+              <span class="spec-tag info">Metadata</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-card" onclick="openPreview(4)">
+          <div class="page-card-preview">
+            <iframe src="05-calendar.html" loading="lazy"></iframe>
+          </div>
+          <div class="page-card-info">
+            <div class="page-card-header">
+              <span class="page-card-num">5</span>
+              <span class="page-card-title">Calendar</span>
+            </div>
+            <p class="page-card-desc">Monthly grid with color-coded task events, day/week/month toggle, and a daily agenda view with time slots below.</p>
+            <div class="page-card-tags">
+              <span class="spec-tag cyan">Monthly</span>
+              <span class="spec-tag amber">Agenda</span>
+              <span class="spec-tag ghost">View Toggle</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-card" onclick="openPreview(5)">
+          <div class="page-card-preview">
+            <iframe src="06-settings.html" loading="lazy"></iframe>
+          </div>
+          <div class="page-card-info">
+            <div class="page-card-header">
+              <span class="page-card-num">6</span>
+              <span class="page-card-title">Settings</span>
+            </div>
+            <p class="page-card-desc">Profile management, theme picker (3 dark variants), accent color selector, notification toggles, team member list, danger zone.</p>
+            <div class="page-card-tags">
+              <span class="spec-tag cyan">Profile</span>
+              <span class="spec-tag info">Theme</span>
+              <span class="spec-tag danger">Danger Zone</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══ Section: Design Tokens ═══ -->
+    <section id="tokens" class="spec-section">
+      <div class="spec-section-title">03 — Design Tokens</div>
+      <div class="tokens-grid">
+
+        <div class="token-card">
+          <div class="token-card-title">Colors — Core</div>
+          <div class="color-row"><div class="color-swatch" style="background:#08090d"></div><span class="color-name">Void Black</span><span class="color-hex">#08090d</span></div>
+          <div class="color-row"><div class="color-swatch" style="background:#0c0e14"></div><span class="color-name">Void Deep</span><span class="color-hex">#0c0e14</span></div>
+          <div class="color-row"><div class="color-swatch" style="background:#12141c"></div><span class="color-name">Void Surface</span><span class="color-hex">#12141c</span></div>
+          <div class="color-row"><div class="color-swatch" style="background:#181b25"></div><span class="color-name">Void Card</span><span class="color-hex">#181b25</span></div>
+          <div class="color-row"><div class="color-swatch" style="background:#1e2130"></div><span class="color-name">Void Elevated</span><span class="color-hex">#1e2130</span></div>
+          <div class="color-row"><div class="color-swatch" style="background:#252838"></div><span class="color-name">Border</span><span class="color-hex">#252838</span></div>
+        </div>
+
+        <div class="token-card">
+          <div class="token-card-title">Colors — Accents</div>
+          <div class="color-row"><div class="color-swatch" style="background:#00e5cc"></div><span class="color-name">Cyan (Primary)</span><span class="color-hex">#00e5cc</span></div>
+          <div class="color-row"><div class="color-swatch" style="background:#ffb547"></div><span class="color-name">Amber (Secondary)</span><span class="color-hex">#ffb547</span></div>
+          <div class="color-row"><div class="color-swatch" style="background:#6c8cff"></div><span class="color-name">Info</span><span class="color-hex">#6c8cff</span></div>
+          <div class="color-row"><div class="color-swatch" style="background:#ff5c72"></div><span class="color-name">Danger</span><span class="color-hex">#ff5c72</span></div>
+          <div class="color-row"><div class="color-swatch" style="background:#4ceb9a"></div><span class="color-name">Success</span><span class="color-hex">#4ceb9a</span></div>
+        </div>
+
+        <div class="token-card">
+          <div class="token-card-title">Typography</div>
+          <div class="font-sample">
+            <div class="font-sample-label">Display / Mono</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;letter-spacing:-0.03em;color:var(--text-primary)">JetBrains Mono</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-top:4px">Headings, labels, data, code</div>
+          </div>
+          <div class="font-sample">
+            <div class="font-sample-label">Body / Sans</div>
+            <div style="font-family:'DM Sans',sans-serif;font-size:18px;font-weight:500;color:var(--text-primary)">DM Sans</div>
+            <div style="font-family:'DM Sans',sans-serif;font-size:11px;color:var(--text-muted);margin-top:4px">Body text, descriptions, paragraphs</div>
+          </div>
+          <div class="font-sample">
+            <div class="font-sample-label">Scale</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);line-height:2">
+              10px — Labels, micro<br>
+              11px — Tags, meta<br>
+              13px — Body text<br>
+              15px — Body large<br>
+              22px — Page title<br>
+              28px — Stat value
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- Preview Modal -->
+  <div class="preview-overlay" id="previewOverlay" onclick="if(event.target===this)closePreview()">
+    <div class="preview-frame-container">
+      <div class="preview-toolbar">
+        <div class="preview-dots">
+          <div class="preview-dot red"></div>
+          <div class="preview-dot yellow"></div>
+          <div class="preview-dot green"></div>
+        </div>
+        <div class="preview-url" id="previewUrl">localhost:8787/01-login.html</div>
+        <button class="preview-close" onclick="closePreview()">ESC · Close</button>
+      </div>
+      <div class="preview-iframe-wrap">
+        <iframe id="previewIframe" src="about:blank"></iframe>
+      </div>
+      <div class="preview-nav" id="previewNav"></div>
+    </div>
+  </div>
+
+  <!-- Keyboard hint -->
+  <div class="kbd-hint">
+    <kbd>Click</kbd> any page to preview · <kbd>Esc</kbd> to close
+  </div>
+
+  <script>
+    const pages = [
+      { file: '01-login.html', name: 'Login' },
+      { file: '02-dashboard.html', name: 'Dashboard' },
+      { file: '03-board.html', name: 'Board' },
+      { file: '04-task-detail.html', name: 'Task Detail' },
+      { file: '05-calendar.html', name: 'Calendar' },
+      { file: '06-settings.html', name: 'Settings' },
+    ];
+
+    let currentPage = -1;
+
+    function openPreview(index) {
+      currentPage = index;
+      const overlay = document.getElementById('previewOverlay');
+      const iframe = document.getElementById('previewIframe');
+      const url = document.getElementById('previewUrl');
+      const nav = document.getElementById('previewNav');
+
+      iframe.src = pages[index].file;
+      url.textContent = `localhost:8787/${pages[index].file}`;
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+
+      // Build nav buttons
+      nav.innerHTML = pages.map((p, i) =>
+        `<button class="preview-nav-btn ${i === index ? 'active' : ''}" onclick="openPreview(${i})">${p.name}</button>`
+      ).join('');
+    }
+
+    function closePreview() {
+      document.getElementById('previewOverlay').classList.remove('open');
+      document.getElementById('previewIframe').src = 'about:blank';
+      document.body.style.overflow = '';
+      currentPage = -1;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePreview();
+      if (currentPage >= 0) {
+        if (e.key === 'ArrowRight' && currentPage < pages.length - 1) openPreview(currentPage + 1);
+        if (e.key === 'ArrowLeft' && currentPage > 0) openPreview(currentPage - 1);
+      }
+    });
+
+    // Highlight active nav link on scroll
+    const sections = document.querySelectorAll('.spec-section');
+    const navLinks = document.querySelectorAll('.spec-nav a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 100) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === `#${current}`);
+      });
+    });
+  </script>
+</body>
+</html>
