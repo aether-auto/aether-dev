@@ -7,7 +7,7 @@ A Claude Code plugin that provides a complete software development workflow — 
 ### One-liner
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/aether-auto/aether-dev/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/aether-auto/aether-dev/master/install.sh | bash
 ```
 
 ### Manual
